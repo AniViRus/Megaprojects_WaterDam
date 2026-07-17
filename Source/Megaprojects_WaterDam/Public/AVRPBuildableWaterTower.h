@@ -1,8 +1,7 @@
-
-
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FGFluidIntegrantInterface.h"
 #include "Buildables/FGBuildableFactory.h"
 #include "AVRPBuildableWaterTower.generated.h"
 
@@ -10,7 +9,7 @@
  * Water Towers which produce water in big amounts based on amount of currently built instances
  */
 UCLASS()
-class MEGAPROJECTS_WATERDAM_API AAVRPBuildableWaterTower : public AFGBuildableFactory
+class MEGAPROJECTS_WATERDAM_API AAVRPBuildableWaterTower : public AFGBuildableFactory, public IFGFluidIntegrantInterface
 {
 	GENERATED_BODY()
 public:
@@ -26,18 +25,32 @@ public:
 	virtual void Factory_PushPipeOutput_Implementation(float dt) override;
 	// End AFGBuildableFactory interface
 
-private:
-	UPROPERTY(EditDefaultsOnly)
+	// Begin Fluid Integrant Interface
+	virtual FFluidBox* GetFluidBox() override;
+	virtual TArray< class UFGPipeConnectionComponent* > GetPipeConnections() override;
+	// End Fluid Integrant Interface
+
+protected:
+	UPROPERTY(SaveGame)
+	FFluidBox mFluidBox;
+	UPROPERTY(EditDefaultsOnly, Category = "Pipeline Attachment")
+	float mFluidBoxVolume;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UFGItemDescriptor> extractedResource;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TArray<TObjectPtr<UFGPipeConnectionComponent>> mPipeOutputConnections;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UFGInventoryComponent> mOutputInventory;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float mCycleTime;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float mItemsPerTower;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float mTowerAmount;
 	float mCurrentExtractProgress;
+private:
+	UPROPERTY()
+	float mFluidMovedLastProducingTick;
+	UPROPERTY(EditDefaultsOnly)
+	float additionalPressure;
 };

@@ -3,9 +3,7 @@
 
 AAVRPBuildableWaterTower::AAVRPBuildableWaterTower()
 {
-	Super();
-	mOutputInventory = CreateDefaultSubobject<UFGInventoryComponent>("Output Inventory");
-	mPipeOutputConnections.Empty();
+	mOutputInventory = CreateDefaultSubobject<UFGInventoryComponent>(TEXT("OutputInventory"));
 	mTowerAmount = 1;
 }
 
@@ -15,7 +13,7 @@ void AAVRPBuildableWaterTower::BeginPlay()
 	if (!HasAuthority()) return;
 	mTowerAmount = 1;
 	mOutputInventory->SetAllowedItemOnIndex(0, extractedResource);
-	mOutputInventory->AddArbitrarySlotSize(0, 600 * mTowerAmount * 2); //Temp
+	mOutputInventory->AddArbitrarySlotSize(0, UFGItemDescriptor::GetStackSize(extractedResource) * mTowerAmount); //Temp
 	ForEachComponent<UFGPipeConnectionComponent>(true, [&](UFGPipeConnectionComponent* Conn) {
 		if (Conn->GetPipeConnectionType() == EPipeConnectionType::PCT_PRODUCER) {
 		}
@@ -34,8 +32,11 @@ void AAVRPBuildableWaterTower::Factory_TickProducing(float dt)
 	Super::Factory_TickProducing(dt);
 	mCurrentExtractProgress += dt / mCycleTime;
 	while (mCurrentExtractProgress >= 1) {
+		FInventoryStack stack;
+		mOutputInventory->GetStackFromIndex(0, stack);
+		int amount = FMath::Min(mItemsPerTower * mTowerAmount, mOutputInventory->GetSlotSize(0) - stack.NumItems);
 		mOutputInventory->AddStack(FInventoryStack(mItemsPerTower * mTowerAmount, extractedResource));
-		if (!CanProduce_Implementation()) break;
+		mCurrentExtractProgress -= 1.0f;
 	}
 }
 
@@ -48,7 +49,18 @@ void AAVRPBuildableWaterTower::Factory_PushPipeOutput_Implementation(float dt)
 		mOutputInventory->GetStackFromIndex(0, stack);
 		int pushedAmount = mPipeOutputConnections[i]->Factory_PushPipeOutput(dt, stack);
 		if (pushedAmount > 0) {
-			mOutputInventory->RemoveFromIndex(0, pushedAmount, mOutputInventory);
+			mFluidMovedLastProducingTick = pushedAmount;
+			mOutputInventory->RemoveFromIndex(0, pushedAmount);
 		}
 	}
+}
+
+FFluidBox* AAVRPBuildableWaterTower::GetFluidBox()
+{
+	return nullptr;
+}
+
+TArray<class UFGPipeConnectionComponent*> AAVRPBuildableWaterTower::GetPipeConnections()
+{
+	return mPipeOutputConnections;
 }
