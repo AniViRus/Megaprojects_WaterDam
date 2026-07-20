@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
+#define LOCTEXT_NAMESPACE "FMegaprojects_WaterDamModule"
+
 class FMegaprojects_WaterDamModule : public IModuleInterface
 {
 public:
@@ -13,3 +15,5 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 };
+
+#undef LOCTEXT_NAMESPACE
