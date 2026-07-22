@@ -54,6 +54,7 @@ void AAVRPBuildableWaterDam::BeginFromLevel_Implementation(int level)
 {
 	GetPowerInfo()->SetDynamicProductionCapacity(.0f);
 	OnLevelChanged_Implementation(level);
+	AddAsRepresentation();
 }
 
 void AAVRPBuildableWaterDam::OnLevelChanged_Implementation(int level)
