@@ -32,6 +32,13 @@ void AAVRPBuildableWaterTower::BeginPlay()
     GetFluidBox()->Z = Z;
 }
 
+void AAVRPBuildableWaterTower::Factory_Tick(float dt)
+{
+    Super::Factory_Tick(dt);
+    mMeasuredSpawnRate = (mSpawnedLastTick / dt) * (dt * 2.5f) + mMeasuredSpawnRate * (1.0f - dt * 2.5f);
+    mSpawnedLastTick = 0;
+}
+
 void AAVRPBuildableWaterTower::Factory_TickProducing(float dt)
 {
     if (!mResourceType) return;
@@ -55,8 +62,7 @@ void AAVRPBuildableWaterTower::Factory_TickProducing(float dt)
             MaxContent);
     }
 
-    const float Spawned = NewContent - GetFluidBox()->Content;
-    mMeasuredSpawnRate = (Spawned / dt) * (dt * 2.5f) + mMeasuredSpawnRate * (1.0f - dt * 2.5f);
+    mSpawnedLastTick = NewContent - GetFluidBox()->Content;
     GetFluidBox()->Content = NewContent;
 }
 

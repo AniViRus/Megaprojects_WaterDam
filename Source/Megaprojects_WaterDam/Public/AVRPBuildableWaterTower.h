@@ -20,6 +20,7 @@ public:
 	// End AActor interface
 
 	// Begin AFGBuildableFactory interface
+	virtual void Factory_Tick(float dt) override;
 	virtual void Factory_TickProducing(float dt) override;
 	// End AFGBuildableFactory interface
 
@@ -42,4 +43,6 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	float mAdditionalPressure;
+	UPROPERTY()
+	float mSpawnedLastTick;
 };
