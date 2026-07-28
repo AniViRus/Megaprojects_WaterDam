@@ -14,9 +14,7 @@ void AAVRPBuildableWaterTower::BeginPlay()
 	mPressure = mAdditionalPressure;
     mResourceType = extractedResource;
 	ForEachComponent<UFGPipeConnectionComponent>(true, [&](UFGPipeConnectionComponent* Conn) {
-		if (Conn->GetPipeConnectionType() == EPipeConnectionType::PCT_PRODUCER) {
-		}
-		mPipeOutputConnections.Add(Conn);
+        mPipeOutputConnections.Add(Conn);
 		});
     if (AFGPipeSubsystem* PipeSubsystem = AFGPipeSubsystem::Get(GetWorld()))
     {
