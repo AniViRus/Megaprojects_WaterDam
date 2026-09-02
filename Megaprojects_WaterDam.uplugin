@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0.0",
+	"VersionName": "1.0.1",
 	"FriendlyName": "Megaprojects: Water Dam",
 	"Description": "A megaproject resulting in Water Dams which produce energy and allow for construction of water towers",
 	"Category": "Modding",
@@ -38,6 +38,6 @@
 			"SemVersion": "^1.1.5"
 		}
 	],
-	"SemVersion": "1.0.0",
+	"SemVersion": "1.0.1",
 	"GameVersion": ">=502094"
 }
